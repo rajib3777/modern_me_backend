@@ -3,9 +3,18 @@
 {% block extrahead %}
     {{ block.super }}
     <script>
-        // Defend against Alpine.js ReferenceErrors in Unfold theme
-        window.adminTheme = 'light';
-        window.theme = 'light';
-        window.themeBindings = {};
+        // Defend against Alpine.js errors in Unfold theme
+        // Ensure 'theme' is a function if not already defined as one
+        if (typeof window.theme !== 'function') {
+            window.theme = function() {
+                return {
+                    adminTheme: 'light',
+                    theme: 'light',
+                    setTheme: function(t) { this.adminTheme = t; }
+                }
+            };
+        }
+        window.adminTheme = window.adminTheme || 'light';
+        window.themeBindings = window.themeBindings || {};
     </script>
 {% endblock %}
