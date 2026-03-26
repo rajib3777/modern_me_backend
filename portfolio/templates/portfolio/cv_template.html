@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.3;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 24pt;
+            margin-bottom: 5px;
+            color: #000;
+        }
+
+        h2 {
+            font-size: 14pt;
+            border-bottom: 1px solid #ccc;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            color: #444;
+        }
+
+        .contact {
+            font-size: 10pt;
+            margin-bottom: 15px;
+        }
+
+        .item {
+            margin-bottom: 10px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+        }
+
+        .role {
+            font-style: italic;
+        }
+
+        ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .skill-cat {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>{{ hero.headline }}</h1>
+    <div class="contact">
+        {{ site.contact_email }} | {{ hero.linkedin_url }} | {{ hero.github_url }}
+    </div>
+
+    <h2>Summary</h2>
+    <p>{{ about.ats_summary }}</p>
+
+    <h2>Experience</h2>
+    {% for exp in experience %}
+    <div class="item">
+        <div class="header">
+            <span>{{ exp.company }}</span>
+            <span>{{ exp.start_date|date:"M Y" }} – {% if exp.is_current %}Present{% else %}{{ exp.end_date|date:"M Y"
+                }}{% endif %}</span>
+        </div>
+        <div class="role">{{ exp.role }} | {{ exp.location }}</div>
+        <ul>
+            {% for line in exp.description.splitlines %}
+            <li>{{ line }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endfor %}
+
+    <h2>Projects</h2>
+    {% for proj in projects %}
+    <div class="item">
+        <div class="header">
+            <span>{{ proj.title }}</span>
+            <span>{{ proj.tech_stack }}</span>
+        </div>
+        <p>{{ proj.ats_description }}</p>
+    </div>
+    {% endfor %}
+
+    <h2>Skills</h2>
+    <div class="skills">
+        {% for skill in skills %}
+        <span>{{ skill.name }}{% if not forloop.last %}, {% endif %}</span>
+        {% endfor %}
+    </div>
+
+    <h2>Education</h2>
+    {% for edu in education %}
+    <div class="item">
+        <div class="header">
+            <span>{{ edu.institute }}</span>
+            <span>{{ edu.start_year }} – {{ edu.end_year|default:"Present" }}</span>
+        </div>
+        <div>{{ edu.degree }} | {{ edu.location }}</div>
+    </div>
+    {% endfor %}
+</body>
+
+</html>

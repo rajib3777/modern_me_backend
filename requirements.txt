@@ -1,0 +1,12 @@
+django>=4.2,<5.0
+djangorestframework
+django-cors-headers
+django-filter
+drf-spectacular
+django-unfold
+django-ckeditor-5
+weasyprint
+Pillow
+psycopg2-binary
+python-dotenv
+whitenoise
