@@ -69,6 +69,12 @@ db_host = os.environ.get('DB_HOST')
 db_port = os.environ.get('DB_PORT', '6543')
 db_name = os.environ.get('DB_NAME')
 
+# SELF-HEALING: Strip accidental copy-paste extra text (e.g. "6543 DB_NAME = postgres")
+if db_user: db_user = db_user.split()[0]
+if db_host: db_host = db_host.split()[0]
+if db_port: db_port = db_port.split()[0]
+if db_name: db_name = db_name.split()[0]
+
 import sys
 
 # Diagnostic logging (will show in Vercel logs)
