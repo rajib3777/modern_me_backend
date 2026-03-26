@@ -79,15 +79,23 @@ print(f"DB_PORT: {db_port}", flush=True)
 print(f"DB_NAME: {db_name}", flush=True)
 print(f"DATABASE_URL present: {bool(os.environ.get('DATABASE_URL'))}", flush=True)
 
-# --- BRUTAL FORCE DB CONFIG ---
+# --- DIRECT DICT DB CONFIG (Safest for special characters) ---
 if all([db_user, db_password, db_host, db_port, db_name]):
-    from urllib.parse import quote_plus
-    encoded_password = quote_plus(db_password)
-    db_url = f"postgresql://{db_user}:{encoded_password}@{db_host}:{db_port}/{db_name}"
     DATABASES = {
-        'default': dj_database_url.parse(db_url, conn_max_age=600, ssl_require=True)
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': db_name,
+            'USER': db_user,
+            'PASSWORD': db_password,
+            'HOST': db_host,
+            'PORT': db_port,
+            'CONN_MAX_AGE': 600,
+            'OPTIONS': {
+                'sslmode': 'require',
+            }
+        }
     }
-    print("STATUS: Configured from COMPONENTS", flush=True)
+    print("STATUS: Configured via DIRECT DICT (No ParseError risk)", flush=True)
 elif os.environ.get('DATABASE_URL'):
     conf = dj_database_url.config(conn_max_age=600, ssl_require=True)
     DATABASES = {'default': conf}
@@ -101,13 +109,13 @@ else:
     }
     print("STATUS: Configured from SQLITE (Fallback)", flush=True)
 
-# FINAL OVERRIDE: If postgres is used but NAME is missing, FORCE it.
+# FINAL OVERRIDE: Ensure NAME is never empty for postgres
 for db_key in DATABASES:
     config = DATABASES[db_key]
     if config.get('ENGINE') and 'postgresql' in config.get('ENGINE'):
         if not config.get('NAME'):
             config['NAME'] = 'postgres'
-            print(f"BRUTAL FORCE: Set NAME='postgres' for {db_key}", flush=True)
+            print(f"FORCED NAME='postgres' for {db_key}", flush=True)
 
 print(f"--- DB FINAL STATE ---", flush=True)
 print(f"ENGINE: {DATABASES['default'].get('ENGINE')}", flush=True)
