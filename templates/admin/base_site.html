@@ -1,0 +1,11 @@
+{% extends "admin/base_site.html" %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script>
+        // Global safety for Unfold theme variables
+        window.adminTheme = window.adminTheme || localStorage.getItem('theme') || 'light';
+        window.theme = window.theme || window.adminTheme;
+        window.themeBindings = window.themeBindings || {};
+    </script>
+{% endblock %}

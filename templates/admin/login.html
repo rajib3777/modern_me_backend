@@ -1,0 +1,11 @@
+{% extends "admin/login.html" %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script>
+        // Defend against Alpine.js ReferenceErrors in Unfold theme
+        window.adminTheme = 'light';
+        window.theme = 'light';
+        window.themeBindings = {};
+    </script>
+{% endblock %}
