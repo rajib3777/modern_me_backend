@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 def health_check(request):
-    return HttpResponse("OK - V5 - AUTO-REPAIR LIVE")
+    return HttpResponse("OK - V6 - BRUTAL FORCE LIVE")
 
 urlpatterns = [
     path('health/', health_check),

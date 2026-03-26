@@ -79,6 +79,7 @@ print(f"DB_PORT: {db_port}", flush=True)
 print(f"DB_NAME: {db_name}", flush=True)
 print(f"DATABASE_URL present: {bool(os.environ.get('DATABASE_URL'))}", flush=True)
 
+# --- BRUTAL FORCE DB CONFIG ---
 if all([db_user, db_password, db_host, db_port, db_name]):
     from urllib.parse import quote_plus
     encoded_password = quote_plus(db_password)
@@ -88,28 +89,29 @@ if all([db_user, db_password, db_host, db_port, db_name]):
     }
     print("STATUS: Configured from COMPONENTS", flush=True)
 elif os.environ.get('DATABASE_URL'):
-    # Fallback to DATABASE_URL if individual parts are missing
     conf = dj_database_url.config(conn_max_age=600, ssl_require=True)
-    # AUTO-FIX: If NAME is missing in postgres, default it to 'postgres'
-    if conf and conf.get('ENGINE') == 'django.db.backends.postgresql' and not conf.get('NAME'):
-        conf['NAME'] = 'postgres'
-        print("ALERT: Force-set NAME to 'postgres' for Supabase!", flush=True)
     DATABASES = {'default': conf}
-    print("STATUS: Configured from DATABASE_URL (Repaired if needed)", flush=True)
+    print("STATUS: Configured from DATABASE_URL", flush=True)
 else:
-    # Final local fallback for build time / local development
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-    print("STATUS: Configured from SQLITE (Default/Local)", flush=True)
+    print("STATUS: Configured from SQLITE (Fallback)", flush=True)
 
-# Final safety check for Vercel
-if os.environ.get('VERCEL') and DATABASES['default'].get('ENGINE') == 'django.db.backends.sqlite3':
-    print("CRITICAL: Vercel is using SQLITE fallback! DB variables are MISSING!", flush=True)
+# FINAL OVERRIDE: If postgres is used but NAME is missing, FORCE it.
+for db_key in DATABASES:
+    config = DATABASES[db_key]
+    if config.get('ENGINE') and 'postgresql' in config.get('ENGINE'):
+        if not config.get('NAME'):
+            config['NAME'] = 'postgres'
+            print(f"BRUTAL FORCE: Set NAME='postgres' for {db_key}", flush=True)
 
+print(f"--- DB FINAL STATE ---", flush=True)
+print(f"ENGINE: {DATABASES['default'].get('ENGINE')}", flush=True)
+print(f"NAME: {DATABASES['default'].get('NAME')}", flush=True)
 print(f"--- DB ENV CHECK END ---", flush=True)
 sys.stdout.flush()
 
