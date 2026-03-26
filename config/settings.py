@@ -70,10 +70,11 @@ db_port = os.environ.get('DB_PORT', '6543')
 db_name = os.environ.get('DB_NAME')
 
 # Diagnostic logging (will show in Vercel logs)
-print(f"--- DB ENV CHECK ---")
-print(f"DB_USER present: {bool(db_user)}")
-print(f"DB_HOST present: {bool(db_host)}")
-print(f"DB_NAME present: {bool(db_name)}")
+print(f"--- DB ENV CHECK START ---")
+print(f"DB_USER: {db_user}")
+print(f"DB_HOST: {db_host}")
+print(f"DB_PORT: {db_port}")
+print(f"DB_NAME: {db_name}")
 print(f"DATABASE_URL present: {bool(os.environ.get('DATABASE_URL'))}")
 
 if all([db_user, db_password, db_host, db_port, db_name]):
@@ -83,13 +84,13 @@ if all([db_user, db_password, db_host, db_port, db_name]):
     DATABASES = {
         'default': dj_database_url.parse(db_url, conn_max_age=600, ssl_require=True)
     }
-    print("Database configured from INDIVIDUAL COMPONENTS")
+    print("STATUS: Configured from COMPONENTS")
 elif os.environ.get('DATABASE_URL'):
     # Fallback to DATABASE_URL if individual parts are missing
     DATABASES = {
         'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
     }
-    print("Database configured from DATABASE_URL")
+    print("STATUS: Configured from DATABASE_URL")
 else:
     # Final local fallback for build time / local development
     DATABASES = {
@@ -98,7 +99,13 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-    print("Database configured from SQLITE FALLBACK")
+    print("STATUS: Configured from SQLITE (Default/Local)")
+
+# Final safety check for Vercel
+if os.environ.get('VERCEL') and DATABASES['default'].get('ENGINE') == 'django.db.backends.sqlite3':
+    print("CRITICAL: Vercel is using SQLITE fallback! DB variables are MISSING!")
+
+print(f"--- DB ENV CHECK END ---")
 
 AUTH_PASSWORD_VALIDATORS = []
 
