@@ -12,6 +12,14 @@
     ],
     "routes": [
         {
+            "src": "/media/(.*)",
+            "dest": "/media/$1"
+        },
+        {
+            "src": "/static/(.*)",
+            "dest": "/staticfiles/$1"
+        },
+        {
             "src": "/(.*)",
             "dest": "config/wsgi.py"
         }

@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 def health_check(request):
-    return HttpResponse("OK - V12 - ENVIRONMENT SELF-HEALING LIVE")
+    return HttpResponse("OK - V13 - MEDIA SERVING LIVE")
 
 urlpatterns = [
     path('health/', health_check),
@@ -16,6 +16,6 @@ urlpatterns = [
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# Always serve media and static files for the portfolio
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
