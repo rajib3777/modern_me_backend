@@ -62,21 +62,34 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-if os.environ.get('DATABASE_URL'):
-    DATABASES = {
-        'default': dj_database_url.parse(
-            os.environ.get('DATABASE_URL'),
-            conn_max_age=600,
-            ssl_require=True
-        )
-    }
+# Database configuration with robust fallback and escaping
+db_from_env = dj_database_url.config(conn_max_age=600, ssl_require=True)
+
+if db_from_env:
+    DATABASES = {'default': db_from_env}
 else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+    # Build from separate variables if DATABASE_URL is missing or fails
+    db_user = os.environ.get('DB_USER')
+    db_password = os.environ.get('DB_PASSWORD')
+    db_host = os.environ.get('DB_HOST')
+    db_port = os.environ.get('DB_PORT')
+    db_name = os.environ.get('DB_NAME')
+
+    if all([db_user, db_password, db_host, db_port, db_name]):
+        from urllib.parse import quote_plus
+        encoded_password = quote_plus(db_password)
+        db_url = f"postgresql://{db_user}:{encoded_password}@{db_host}:{db_port}/{db_name}"
+        DATABASES = {
+            'default': dj_database_url.parse(db_url, conn_max_age=600, ssl_require=True)
         }
-    }
+    else:
+        # Final local fallback
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
 
 AUTH_PASSWORD_VALIDATORS = []
 
