@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 def health_check(request):
-    return HttpResponse("OK - V14 - MEDIA BUNDLE LIVE")
+    return HttpResponse("OK - V15 - INCREASED LAMBDA SIZE LIVE")
 
 urlpatterns = [
     path('health/', health_check),
