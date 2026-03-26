@@ -149,6 +149,11 @@ REST_FRAMEWORK = {
 UNFOLD = {
     "SITE_TITLE": "Portfolio Admin",
     "SITE_HEADER": "Modern Portfolio",
+    "SITE_URL": "/",
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": True,
+    },
     "COLORS": {
         "primary": {
             "50": "239 246 255",
