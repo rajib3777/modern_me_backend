@@ -6,12 +6,19 @@
             "use": "@vercel/python",
             "config": {
                 "maxLambdaSize": "50mb",
-                "runtime": "python3.10",
-                "includeFiles": "media/**"
+                "runtime": "python3.10"
             }
         }
     ],
     "routes": [
+        {
+            "src": "/media/(.*)",
+            "dest": "media/$1"
+        },
+        {
+            "src": "/static/(.*)",
+            "dest": "staticfiles/$1"
+        },
         {
             "src": "/(.*)",
             "dest": "config/wsgi.py"
