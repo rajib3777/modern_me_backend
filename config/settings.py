@@ -63,8 +63,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
-    'default': dj_database_url.parse(
-        f"postgresql://{os.environ.get('user')}:{quote(os.environ.get('password'))}@{os.environ.get('host')}:{os.environ.get('port')}/{os.environ.get('dbname')}",
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL'),
         conn_max_age=600,
         ssl_require=True
     )
