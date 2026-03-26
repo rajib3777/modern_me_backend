@@ -1,2 +1,0 @@
-﻿#!/bin/bash
-echo "USING PRE-BUILT STATICFILES"
