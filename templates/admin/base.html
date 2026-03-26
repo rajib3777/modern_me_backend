@@ -1,0 +1,22 @@
+{% extends "admin/base.html" %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script>
+        // Global safety for Unfold theme Alpine.js components
+        if (typeof window.theme !== 'function') {
+            window.theme = function() {
+                return {
+                    adminTheme: localStorage.getItem('theme') || 'light',
+                    theme: localStorage.getItem('theme') || 'light',
+                    setTheme: function(t) { 
+                        this.adminTheme = t; 
+                        localStorage.setItem('theme', t);
+                    }
+                }
+            };
+        }
+        window.adminTheme = window.adminTheme || 'light';
+        window.themeBindings = window.themeBindings || {};
+    </script>
+{% endblock %}
